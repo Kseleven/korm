@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"net"
 	"net/netip"
+	"os"
 	"testing"
 	"time"
 )
@@ -22,10 +23,24 @@ type User struct {
 	Numbers []int
 }
 
-const ConnStr string = "user=test password=test host=192.168.54.137 port=5432 database=test sslmode=disable"
+func TestReadEnv(t *testing.T) {
+	data, err := readEnv()
+	require.NoError(t, err)
+	t.Log(data)
+}
+
+func readEnv() (string, error) {
+	data, err := os.ReadFile(".env")
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
+}
 
 func TestNewDB(t *testing.T) {
-	db, err := NewDB(ConnStr)
+	connStr, err := readEnv()
+	require.NoError(t, err)
+	db, err := NewDB(connStr)
 	require.NoError(t, err)
 	defer db.Close()
 	//insert
@@ -51,7 +66,9 @@ type Student struct {
 }
 
 func TestInsertOne(t *testing.T) {
-	db, err := NewDB(ConnStr)
+	connStr, err := readEnv()
+	require.NoError(t, err)
+	db, err := NewDB(connStr)
 	require.NoError(t, err)
 	require.NoError(t, db.RegisterModels(Student{}))
 
@@ -71,7 +88,9 @@ func TestInsertOne(t *testing.T) {
 }
 
 func TestInsertMany(t *testing.T) {
-	db, err := NewDB(ConnStr)
+	connStr, err := readEnv()
+	require.NoError(t, err)
+	db, err := NewDB(connStr)
 	require.NoError(t, err)
 	require.NoError(t, db.RegisterModels(Student{}))
 

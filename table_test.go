@@ -136,7 +136,9 @@ email TEXT
 }
 
 func TestDB_RegisterModels(t *testing.T) {
-	db, err := NewDB(ConnStr)
+	connStr, err := readEnv()
+	require.NoError(t, err)
+	db, err := NewDB(connStr)
 	require.NoError(t, err)
 	assert.NoError(t, db.RegisterModels(Model{}, IndexModel{}, EmbedModel{}))
 }
