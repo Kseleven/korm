@@ -31,6 +31,10 @@ type IndexModel struct {
 	Address      netip.Addr      `json:"address"`
 }
 
+//func (i *IndexModel) Scan() []any {
+//	return []any{&i.Id, &i.CreateAt, &i.Name, &i.Alias, &i.Age, &i.IdentityCard, &i.JsonColumn, &i.JsonMap, &i.Address}
+//}
+
 type EmbedModel struct {
 	Id           int64     `db:"pk"`
 	CreateAt     time.Time `db:"notNull"`

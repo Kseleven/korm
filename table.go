@@ -58,6 +58,14 @@ func (s *DB) genCreateTableSql(model any) ([]string, error) {
 	return append([]string{createTableSql}, createIdxSql...), nil
 }
 
+func (s *DB) getTableName(model any) (string, error) {
+	t := reflect.TypeOf(model)
+	if t.Kind() != reflect.Struct {
+		return "", fmt.Errorf("model must be a struct")
+	}
+	return s.TableName(t.Name()), nil
+}
+
 func (s *DB) parseFields(tableName string, t reflect.Type, unique map[string]struct{}, compositeIdxMap map[string][]string) (
 	columns []string, columnTypes []string, createIdxSql []string, err error) {
 	columns = make([]string, 0, t.NumField())
@@ -92,7 +100,7 @@ func (s *DB) parseFields(tableName string, t reflect.Type, unique map[string]str
 			}
 		}
 
-		columnName := s.DBNamePattern.ColumnName(field.Name)
+		columnName := s.DBPattern.ColumnName(field.Name)
 		if _, ok := unique[columnName]; !ok {
 			unique[columnName] = struct{}{}
 		} else {
@@ -113,7 +121,7 @@ func isFieldEmbed(field reflect.StructField) bool {
 }
 
 func (s *DB) genColumnSql(tableName string, field reflect.StructField) (col string, colType string, indexSQL string, compositeIndex string, err error) {
-	name := s.DBNamePattern.ColumnName(field.Name)
+	name := s.DBPattern.ColumnName(field.Name)
 	tag := field.Tag.Get("db")
 	var ukIndex string
 	if len(tag) > 0 {

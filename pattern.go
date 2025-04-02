@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-type DBNamePattern interface {
+type DBPattern interface {
 	TableName(string) string
 	ColumnName(string) string
 }
