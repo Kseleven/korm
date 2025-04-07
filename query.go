@@ -8,25 +8,25 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func (tx DBTx) Select(out any, query string, args ...any) error {
+func (tx DBTx) Select(target any, query string, args ...any) error {
 	rows, err := tx.Tx.Query(context.Background(), query, args...)
 	if err != nil {
 		return err
 	}
 
-	return tx.scanRows(rows, out)
+	return tx.scanRows(rows, target)
 }
 
-func (tx DBTx) scanRows(rows pgx.Rows, out interface{}) error {
-	v := reflect.ValueOf(out)
+func (tx DBTx) scanRows(rows pgx.Rows, target interface{}) error {
+	v := reflect.ValueOf(target)
 	if v.Kind() != reflect.Ptr || v.Elem().Kind() != reflect.Slice {
-		return fmt.Errorf("out must be a pointer to a slice")
+		return fmt.Errorf("target must be a pointer to a slice")
 	}
 
 	v = v.Elem()
 	t := v.Type().Elem()
 	if t.Kind() != reflect.Ptr {
-		return fmt.Errorf("out element must be a pointer")
+		return fmt.Errorf("target element must be a pointer")
 	}
 	t = t.Elem()
 	fieldMap := make(map[string]string, t.NumField())

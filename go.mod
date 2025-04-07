@@ -4,7 +4,6 @@ go 1.22
 
 require (
 	github.com/jackc/pgx/v5 v5.7.4
-	github.com/lib/pq v1.10.9
 	github.com/stretchr/testify v1.10.0
 )
 
