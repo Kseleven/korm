@@ -2,6 +2,7 @@ package korm
 
 import (
 	"context"
+
 	"github.com/jackc/pgx/v5"
 )
 
@@ -43,6 +44,14 @@ func (s *DB) GetDBPattern() DBPattern {
 func (s *DB) GetTableCache(name string) (*Field, bool) {
 	f, ok := s.tableCache[name]
 	return f, ok
+}
+
+func (s *DB) Exec(sql string, args ...any) (int64, error) {
+	pgTag, err := s.Conn.Exec(context.Background(), sql, args...)
+	if err != nil {
+		return 0, err
+	}
+	return pgTag.RowsAffected(), nil
 }
 
 type DBTx struct {

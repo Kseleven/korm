@@ -5,6 +5,7 @@ type Driver interface {
 	Begin() (Transaction, error)
 	GetDBPattern() DBPattern
 	GetTableCache(name string) (*Field, bool)
+	Exec(sql string, args ...any) (int64, error)
 }
 
 type Transaction interface {
